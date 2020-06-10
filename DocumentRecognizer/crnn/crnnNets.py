@@ -109,14 +109,15 @@ class CRNN(nn.Module):
             self.cuda()
         self.eval()
 
-    def predict(self, image):
+    def predict(self, image, device=torch.device('cpu')):
         image = resizeNormalize(image, 32)
         image = image.astype(np.float32)
         image = torch.from_numpy(image)
-        if torch.cuda.is_available() and self.GPU:
-            image = image.cuda()
-        else:
-            image = image.cpu()
+        # if torch.cuda.is_available() and self.GPU:
+        #     image = image.cuda()
+        # else:
+        #     image = image.cpu()
+        image = image.to(device)
 
         image = image.view(1, 1, *image.size())
         image = Variable(image)
