@@ -21,8 +21,8 @@ def pse(kernals, min_area):
                 label_gt[label_gt == label_idx] = 0
         label_gt = label_gt.astype(np.uint8)
         pp[label_gt > 0] = 255 - (255 - 50) / (kernals.shape[0] - 1) * i
-    cv2.imshow("min kernel", pp)
-    cv2.waitKey(0)
+    # cv2.imshow("min kernel", pp)
+    # cv2.waitKey(0)
 
     queue_t = queue.Queue(maxsize=0)
     next_queue = queue.Queue(maxsize=0)
