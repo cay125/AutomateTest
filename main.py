@@ -1,11 +1,14 @@
 from DocumentDetector.psenet.detector import Detector
 from DocumentRecognizer.crnn.recognizer import Recognizer
 import cv2
+import torch
 
-doc_detector = Detector()
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+doc_detector = Detector(device)
 doc_detector.load_weights('model path')
 
-doc_recognizer = Recognizer()
+doc_recognizer = Recognizer(device)
 doc_recognizer.load_weights('model path')
 
 img_path = 'img path'
