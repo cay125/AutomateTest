@@ -1,16 +1,17 @@
 import torch
 import cv2
-import pseNets
+import DocumentDetector.psenet.pseNets as pseNets
 import numpy as np
 from PIL import Image
 from torchvision import transforms
-from pypse import pse as pypse
+from DocumentDetector.psenet.pypse import pse as pypse
 import collections
 
 
 class Detector:
-    def __init__(self):
+    def __init__(self, device=torch.device('cpu')):
         self.model = pseNets.resnet50(pretrained=True, num_classes=7)  # type:torch.nn.Module
+        self.device = device
         for param in self.model.parameters():
             param.requires_grad = False
 
@@ -22,15 +23,16 @@ class Detector:
             d[tmp] = value
         self.model.load_state_dict(d)
         self.model.eval()
+        self.model = self.model.to(self.device)
 
-    def predict(self, img_path):
-        org_img = cv2.imread(img_path)
+    def predict(self, org_img):
         img = org_img[:, :, [2, 1, 0]]
         img = Image.fromarray(img)
         img = img.convert('RGB')
         img = transforms.ToTensor()(img)
         img = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])(img)
         img = img.unsqueeze(0)
+        img = img.to(self.device)
 
         outputs = self.model(img)
 
@@ -65,5 +67,4 @@ class Detector:
             bbox = bbox.astype('int32')
             bboxes.append(bbox.reshape(-1))
 
-        bboxes = bboxes.reshape(-1, 4, 2)
         return bboxes
